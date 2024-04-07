@@ -6,8 +6,8 @@ VMambaMorph: a Visual Mamba-based Framework with Cross-Scan Module for Deformabl
 
 
 <img src="img/framework.png" width="50%" height="auto">
-
 <img src="img/history.png" width="50%" height="auto">
+<img src="img/results.png" width="50%" height="auto">
 
 
 ## Requirements
