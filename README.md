@@ -1,6 +1,8 @@
-# VMambaMorph
-VMambaMorph: a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration
+<div align="center">
+<h1> <b>VMambaMorph</b>: a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration </h1>
+</div>
 
+> This repo provides an implementation of the training and inference pipeline for VMambamorph. 
 
 ## Graphical Abstract
 
@@ -10,6 +12,11 @@ VMambaMorph: a Visual Mamba-based Framework with Cross-Scan Module for Deformabl
 <img src="img/results.png" width="50%" height="auto">
 
 
+## Contents ###
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [Reference](#reference)
+  
 ## Requirements
 
 `pip install mamba-ssm`
