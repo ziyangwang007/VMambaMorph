@@ -1,5 +1,5 @@
 <div align="center">
-<h1> <b>VMambaMorph</b>: \\a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration </h1>
+<h1> <b>VMambaMorph</b>: <br /> a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration </h1>
 </div>
 
 > This repo provides an implementation of the training and inference pipeline for VMambamorph. 
