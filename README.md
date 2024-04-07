@@ -30,7 +30,7 @@ cd VMambaMorph
 
 2. Dataset:
 Download the SR-Reg dataset [Official Page](https://github.com/Guo-Stone/MambaMorph). 
-(Please be aware the size of dataset is 128x128x128 in the VMambaMorph project.)
+(Please be aware the input size is 128x128x128 in the VMambaMorph project, due to memory cost.)
 
 3. Train VoxelMorph (With or Without Feature Extractor)
 ```
