@@ -2,7 +2,7 @@
 <h1> <b>VMambaMorph</b>: <br /> a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration </h1>
 </div>
 
-This technical work has been accumulated on the basis of the [Mambamorph](https://arxiv.org/pdf/2401.13934v4.pdf) extension and is not <b>formally intended for publication</b>.
+This technical work has been accumulated on the basis of the [Mambamorph](https://arxiv.org/pdf/2401.13934v4.pdf) extension and has not yet <b>formally intended for publication</b>.
 
 > This repo provides an implementation of the training and inference pipeline for [VMambamorph](https://arxiv.org/abs/2404.05105). 
 
