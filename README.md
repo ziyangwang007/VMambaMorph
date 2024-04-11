@@ -1,5 +1,5 @@
 <div align="center">
-<h1> <b>VMambaMorph</b>: <br /> a Recursive Multi-Modality Deformable 3D Image Registration Framework based on Visual State Space Model with Cross-Scan Module </h1>
+<h1> <b>VMambaMorph</b>: <br /> VMambaMorph: a Recursive Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module </h1>
 </div>
 
 The second version of ArXiv is processing!!!
