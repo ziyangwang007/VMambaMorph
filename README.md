@@ -24,6 +24,9 @@ This technical work has been accumulated on the basis of the [Mambamorph](https:
 ## Requirements
 
 `pip install mamba-ssm`
+`pip install voxelmorph`
+
+And some other basic python library: SimpleITK, torchdiffeq, timm, flash_attn, ml_collections, fvcore, py.
 
 Linux
 NVIDIA GPU
@@ -67,7 +70,12 @@ python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --mode
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vmfeat --model vmm-feat
 ```
 
-7. Test
+7. Train Recursive VMambaMorph With Feature Extractor
+```
+python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_rvm --model rvm
+```
+
+8. Test
 ```
 python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path/output/train_debug_xxx/min_train.pt"
 ```

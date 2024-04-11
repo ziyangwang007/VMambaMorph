@@ -154,7 +154,12 @@ elif args.model == 'vmm-feat':
     model = TransMorph.VMambaMorphFeat(config)
     if args.load_model:
         model.load_state_dict(torch.load(args.load_model))
-
+elif args.model == 'rvm':
+    config = CONFIGS_TM['VMambaMorph']
+    model = TransMorph.RecVMambaMorphFeat(config)
+    if args.load_model:
+        model.load_state_dict(torch.load(args.load_model))
+      
 
 
 if nb_gpus > 1:
