@@ -253,12 +253,12 @@ elif args.model == 'mm-feat':
     model = TransMorph.MambaMorphFeat(config)
     if args.load_model:
         model.load_state_dict(torch.load(args.load_model))
-elif args.model == 'vmm':
+elif args.model == 'vimm':
     config = CONFIGS_TM['VMambaMorph']
     model = TransMorph.VMambaMorph(config)
     if args.load_model:
         model.load_state_dict(torch.load(args.load_model))
-elif args.model == 'vmm-feat':
+elif args.model == 'vimm-feat':
     config = CONFIGS_TM['VMambaMorph']
     model = TransMorph.VMambaMorphFeat(config)
     if args.load_model:

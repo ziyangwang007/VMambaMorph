@@ -66,8 +66,8 @@ python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --mode
 
 6. Train VMambaMorph (With or Without Feature Extractor)
 ```
-python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vm --model vmm
-python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vmfeat --model vmm-feat
+python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vm --model vimm
+python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vmfeat --model vimm-feat
 ```
 
 7. Train Recursive VMambaMorph With Feature Extractor
