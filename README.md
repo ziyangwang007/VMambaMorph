@@ -1,10 +1,8 @@
 <div align="center">
-<h1> <b>VMambaMorph</b>: <br /> VMambaMorph: a Recursive Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module </h1>
+<h1> <b>VMambaMorph</b>: <br /> VMambaMorph: a Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module </h1>
 </div>
 
 The second version of ArXiv is processing!!!
-
-This technical work has been accumulated on the basis of the [Mambamorph](https://arxiv.org/pdf/2401.13934v4.pdf) extension and has not yet <b>formally intended for publication</b>. 
 
 > This repo provides an implementation of the training and inference pipeline for [VMambamorph](https://arxiv.org/abs/2404.05105). 
 
@@ -70,11 +68,6 @@ python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --mode
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vmfeat --model vimm-feat
 ```
 
-7. Train Recursive VMambaMorph With Feature Extractor
-```
-python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_rvm --model rvm
-```
-
 8. Test
 ```
 python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path/output/train_debug_xxx/min_train.pt"
@@ -83,7 +76,7 @@ python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path
 ## Reference
 ```
 @article{wang2024vmambamorph,
-  title={VMambaMorph: a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration},
+  title={VMambaMorph: a Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module},
   author={Wang, Ziyang and Zheng, Jianqing and Ma, Chao and Guo, Tao},
   journal={arXiv preprint arXiv:2402.05105},
   year={2024}
