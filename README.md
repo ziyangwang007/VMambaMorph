@@ -38,7 +38,7 @@ CUDA 11.6+
 ## Usage
 
 1. Clone the repo:
-```
+```shell
 git clone https://github.com/ziyangwang007/VMambaMorph.git 
 cd VMambaMorph
 ```
@@ -48,37 +48,37 @@ Download the SR-Reg dataset [Official Page](https://github.com/Guo-Stone/MambaMo
 (Please be aware the input size is 128x128x128 in the VMambaMorph project, due to memory cost.)
 
 3. Train VoxelMorph (With or Without Feature Extractor)
-```
+```shell
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vm --model vm
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vmfeat --model vm-feat
 ```
 
 4. Train TransMorph (With or Without Feature Extractor)
-```
+```shell
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_tm --model tm
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_tmfeat --model tm-feat
 ```
 
 5. Train MambaMorph (With or Without Feature Extractor)
-```
+```shell
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_mm --model mm
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_mmfeat --model mm-feat
 ```
 
 6. Train VMambaMorph (With or Without Feature Extractor)
-```
+```shell
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vm --model vimm
 python ./scripts/torch/train_cross.py --gpu 0 --epochs 300 --batch-size 1 --model-dir output/train_debug_vmfeat --model vimm-feat
 ```
 
 8. Test
-```
+```shell
 python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path/output/train_debug_xxx/min_train.pt"
 ```
 
 ## Reference
 - Ziyang Wang, Jianqing Zheng, Chao Ma, Tao Guo. "VMambaMorph: a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration." arXiv preprint arXiv:2404.05105 (2024).
-```
+```bibtex
 @article{wang2024vmambamorph,
   title={VMambaMorph: a Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module},
   author={Wang, Ziyang and Zheng, Jianqing and Ma, Chao and Guo, Tao},
@@ -86,8 +86,8 @@ python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path
   year={2024}
 }
 ```
-and if applicable, the previous version of [MambaMorph](https://github.com/Guo-Stone/MambaMorph):
-```
+and if applicable, the version of [MambaMorph](https://github.com/Guo-Stone/MambaMorph):
+```bibtex
 @article{guo2024mambamorph,
   title={Mambamorph: a mamba-based backbone with contrastive feature learning for deformable mr-ct registration},
   author={Guo, Tao and Wang, Yinuo and Meng, Cai},
