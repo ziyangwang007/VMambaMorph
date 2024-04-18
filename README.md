@@ -77,6 +77,7 @@ python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path
 ```
 
 ## Reference
+- Ziyang Wang, Jianqing Zheng, Chao Ma, Tao Guo. "VMambaMorph: a Visual Mamba-based Framework with Cross-Scan Module for Deformable 3D Image Registration." arXiv preprint arXiv:2404.05105 (2024).
 ```
 @article{wang2024vmambamorph,
   title={VMambaMorph: a Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module},
@@ -84,7 +85,9 @@ python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path
   journal={arXiv preprint arXiv:2402.05105},
   year={2024}
 }
-
+```
+and if applicable, the previous version of [MambaMorph](https://github.com/Guo-Stone/MambaMorph):
+```
 @article{guo2024mambamorph,
   title={Mambamorph: a mamba-based backbone with contrastive feature learning for deformable mr-ct registration},
   author={Guo, Tao and Wang, Yinuo and Meng, Cai},
