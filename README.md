@@ -1,5 +1,8 @@
 <div align="center">
-<h1> <b>VMambaMorph</b>: <br /> VMambaMorph: a Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module </h1>
+<h1> <b>VMambaMorph</b>: <br />a Multi-Modality Deformable Image Registration Framework based on Visual State Space Model with Cross-Scan Module </h1>
+
+[![arXiv](https://img.shields.io/badge/arXiv-2404.05105-b31b1b.svg)](https://arxiv.org/abs/2404.05105)
+
 </div>
 
 The second version of ArXiv is processing!!!
