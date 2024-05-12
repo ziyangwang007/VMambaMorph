@@ -1790,8 +1790,7 @@ class VMambaMorphFeat(nn.Module):
             ret['feature'] = torch.cat((source_feat, target_feat), dim=1)
         return ret
 
-
-
+'''
 class RecVMambaMorphFeat(nn.Module):
     def __init__(self, config):
         """
@@ -1860,7 +1859,8 @@ class RecVMambaMorphFeat(nn.Module):
         for rr in range(rec_num):
             source_feat = self.feature_extractor(moved)
             target_feat = self.feature_extractor(target)
-
+            if rr==0:
+                src_feat = source_feat
             x = torch.cat([source_feat, target_feat], dim=1)
             if self.if_convskip:
                 x_s0 = x.clone()
@@ -1899,7 +1899,128 @@ class RecVMambaMorphFeat(nn.Module):
             ret['pos_flow'] = disp_comp
         if return_feature:
             for head in self.read_out_head:
-                source_feat = head(source_feat)
+                source_feat = head(src_feat)
+                target_feat = head(target_feat)
+            ret['feature'] = torch.cat((source_feat, target_feat), dim=1)
+        return ret
+'''
+class RecVMambaMorphFeat(nn.Module):
+    def __init__(self, config):
+        """
+        RecVMambaMorph Model
+        """
+        super(RecVMambaMorphFeat, self).__init__()
+        if_convskip = config.if_convskip
+        self.if_convskip = if_convskip
+        if_transskip = config.if_transskip
+        self.if_transskip = if_transskip
+        embed_dim = config.embed_dim
+        nb_feat_extractor = [[16] * 2, [16] * 4]
+        self.feature_extractor = Unet(config.img_size,
+                                      infeats=1,
+                                      nb_features=nb_feat_extractor,
+                                      nb_levels=None,
+                                      feat_mult=1,
+                                      nb_conv_per_level=1,
+                                      half_res=False)
+
+        # ReadOut head for feature constrastive learning
+        self.read_out_head = nn.ModuleList()
+
+        self.read_out_head.append(ConvBlock(len(config.img_size), nb_feat_extractor[-1][-1],
+                                            nb_feat_extractor[-1][-1] // 2, stride=2))
+        self.read_out_head.append(ConvBlock(len(config.img_size), nb_feat_extractor[-1][-1] // 2, 3))
+
+        self.transformer = VMambaBlock(patch_size=config.patch_size,
+                                       in_chans=nb_feat_extractor[-1][-1] * 2,
+                                       embed_dim=config.embed_dim,
+                                       depths=config.depths,
+                                       drop_rate=config.drop_rate,
+                                       ape=config.ape,
+                                       spe=config.spe,
+                                       rpe=config.rpe,
+                                       patch_norm=config.patch_norm,
+                                       out_indices=config.out_indices,
+                                       d_state=config.d_state,
+                                       d_conv=config.d_conv,
+                                       expand=config.expand,
+                                       )
+
+        self.up1 = DecoderBlock(embed_dim * 4, embed_dim * 2, skip_channels=embed_dim * 2 if if_transskip else 0,
+                                use_batchnorm=False)  # 384, 20, 20, 64
+        self.up2 = DecoderBlock(embed_dim * 2, embed_dim, skip_channels=embed_dim if if_transskip else 0,
+                                use_batchnorm=False)  # 384, 40, 40, 64
+        self.up3 = DecoderBlock(embed_dim, embed_dim // 2, skip_channels=embed_dim // 2 if if_convskip else 0,
+                                use_batchnorm=False)  # 384, 80, 80, 128
+
+        self.up4 = DecoderBlock(embed_dim // 2, config.reg_head_chan,
+                                skip_channels=config.reg_head_chan if if_convskip else 0,
+                                use_batchnorm=False)  # 384, 160, 160, 256
+        self.c1 = Conv3dReLU(nb_feat_extractor[-1][-1] * 2, embed_dim // 2, 3, 1, use_batchnorm=False)
+        self.c2 = Conv3dReLU(nb_feat_extractor[-1][-1] * 2, config.reg_head_chan, 3, 1, use_batchnorm=False)
+        self.reg_head = RegistrationHead(
+            in_channels=config.reg_head_chan,
+            out_channels=3,
+            kernel_size=3,
+        )
+        self.spatial_trans = SpatialTransformer(config.img_size)
+        self.avg_pool = nn.AvgPool3d(3, stride=2, padding=1)
+        self.integrate = layers.VecInt(config.img_size, 7)
+
+    def feat_loss(self,feat1,feat2):
+
+        return torch.mean(torch.abs(feat1 - feat2 - torch.mean(feat1,dim=[2,3,4],keepdim=True) + torch.mean(feat2,dim=[2,3,4],keepdim=True)))
+
+    def forward(self, source, target, return_pos_flow=True, return_feature=False,return_feature_loss=True, rec_num=2):
+        moved=source
+        for rr in range(rec_num):
+            source_feat = self.feature_extractor(moved)
+            target_feat = self.feature_extractor(target)
+            if rr==0:
+                src_feat = source_feat
+            # if rr == rec_num-1:
+            #     loss_feat = self.feat_loss(self.avg_pool(source_feat),self.avg_pool(target_feat))
+            x = torch.cat([source_feat, target_feat], dim=1)
+            if self.if_convskip:
+                x_s0 = x.clone()
+                x_s1 = self.avg_pool(x)
+                f4 = self.c1(x_s1)
+                f5 = self.c2(x_s0)
+            else:
+                f4 = None
+                f5 = None
+
+            out_feats = self.transformer(x)
+
+            if self.if_transskip:
+                f1 = out_feats[-2]
+                f2 = out_feats[-3]
+
+            else:
+                f1 = None
+                f2 = None
+
+            x = self.up1(out_feats[-1], f1)
+            x = self.up2(x, f2)
+            # print(x.shape)
+            x = self.up3(x, f4)
+            # print(x.shape)
+            x = self.up4(x, f5)
+            # print(x.shape)
+            flow = self.reg_head(x)
+            pos_flow = self.integrate(flow)
+            # print(pos_flow.shape)
+            disp_comp = pos_flow if rr==0 else self.spatial_trans(disp_comp, pos_flow) + pos_flow
+            moved = self.spatial_trans(source, disp_comp)
+
+        ret = {'moved_vol': moved, 'preint_flow': flow}
+        if return_pos_flow:
+            ret['pos_flow'] = disp_comp
+        if return_feature_loss:
+            ret['feature_loss'] = self.feat_loss(self.avg_pool(source_feat),self.avg_pool(target_feat))
+        if return_feature:
+            for head in self.read_out_head:
+                source_feat = head(src_feat)
                 target_feat = head(target_feat)
             ret['feature'] = torch.cat((source_feat, target_feat), dim=1)
         return ret

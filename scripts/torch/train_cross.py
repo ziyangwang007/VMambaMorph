@@ -382,6 +382,9 @@ for epoch in range(args.initial_epoch, args.epochs):
                 loss_list.append(curr_loss.item())
                 loss += curr_loss
 
+            if args.model == 'rvm':
+                loss += 10 * ret_dict['feature_loss']
+
             epoch_loss.append(loss_list)
             epoch_total_loss.append(loss.item())
             # print(f"Step: {step}, Loss: {loss}")
