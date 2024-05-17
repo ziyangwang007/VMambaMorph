@@ -5,8 +5,6 @@
 
 </div>
 
-The second version of ArXiv is processing!!!
-
 > This repo provides an implementation of the training and inference pipeline for [VMambamorph](https://arxiv.org/abs/2404.05105). 
 
 ## Graphical Abstract
