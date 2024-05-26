@@ -217,7 +217,7 @@ class Grad:
 
         return df
 
-    def loss(self, _,_,_, ddf_pred, weight=None, return_per_loss=False, ignore_label=None):
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, ddf_pred=None, weight=None, return_per_loss=False, ignore_label=None):
         if self.penalty == 'l1':
             dif = [torch.abs(f) for f in self._diffs(ddf_pred)]
         else:
