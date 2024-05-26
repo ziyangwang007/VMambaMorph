@@ -24,23 +24,29 @@ cl_cfg = dict(
 
 
 class NCC:
+    """
+    Local (over window) normalized cross correlation loss.
+    """
+
     def __init__(self, win=None):
         self.win = win
 
     def loss(self, y_true, y_pred, weight=None, return_per_loss=False):
+
         Ii = y_true
         Ji = y_pred
 
         # get dimension of volume
-        # assumes Ii, Ji are sized [batch_size, channels, *vol_shape]
+        # assumes Ii, Ji are sized [batch_size, *vol_shape, nb_feats]
         ndims = len(list(Ii.size())) - 2
-        assert ndims in [1, 2, 3], f"volumes should be 1 to 3 dimensions. found: {ndims}"
+        assert ndims in [1, 2, 3], "volumes should be 1 to 3 dimensions. found: %d" % ndims
 
         # set window size
         win = [9] * ndims if self.win is None else self.win
 
         # compute filters
-        sum_filt = torch.ones([1, 1, *win]).to(Ii.device)
+        sum_filt = torch.ones([1, 1, *win]).to("cuda")
+
         pad_no = math.floor(win[0] / 2)
 
         if ndims == 1:
@@ -56,33 +62,26 @@ class NCC:
         # get convolution function
         conv_fn = getattr(F, 'conv%dd' % ndims)
 
-        # compute CC squares for each channel
-        def compute_local_sums(I, J):
-            I2 = I * I
-            J2 = J * J
-            IJ = I * J
+        # compute CC squares
+        I2 = Ii * Ii
+        J2 = Ji * Ji
+        IJ = Ii * Ji
 
-            I_sum = conv_fn(I, sum_filt, stride=stride, padding=padding)
-            J_sum = conv_fn(J, sum_filt, stride=stride, padding=padding)
-            I2_sum = conv_fn(I2, sum_filt, stride=stride, padding=padding)
-            J2_sum = conv_fn(J2, sum_filt, stride=stride, padding=padding)
-            IJ_sum = conv_fn(IJ, sum_filt, stride=stride, padding=padding)
+        I_sum = conv_fn(Ii, sum_filt, stride=stride, padding=padding)
+        J_sum = conv_fn(Ji, sum_filt, stride=stride, padding=padding)
+        I2_sum = conv_fn(I2, sum_filt, stride=stride, padding=padding)
+        J2_sum = conv_fn(J2, sum_filt, stride=stride, padding=padding)
+        IJ_sum = conv_fn(IJ, sum_filt, stride=stride, padding=padding)
 
-            win_size = np.prod(win)
-            u_I = I_sum / win_size
-            u_J = J_sum / win_size
+        win_size = np.prod(win)
+        u_I = I_sum / win_size
+        u_J = J_sum / win_size
 
-            cross = IJ_sum - u_J * I_sum - u_I * J_sum + u_I * u_J * win_size
-            I_var = I2_sum - 2 * u_I * I_sum + u_I * u_I * win_size
-            J_var = J2_sum - 2 * u_J * J_sum + u_J * u_J * win_size
+        cross = IJ_sum - u_J * I_sum - u_I * J_sum + u_I * u_J * win_size
+        I_var = I2_sum - 2 * u_I * I_sum + u_I * u_I * win_size
+        J_var = J2_sum - 2 * u_J * J_sum + u_J * u_J * win_size
 
-            return cross, I_var, J_var
-
-        cc = torch.zeros_like(Ii)
-        for c in range(Ii.shape[1]):
-            cross, I_var, J_var = compute_local_sums(Ii[:, c:c+1], Ji[:, c:c+1])
-            cc[:, c:c+1] = cross * cross / (I_var * J_var + 1e-5)
-
+        cc = cross * cross / (I_var * J_var + 1e-5)
         if weight is not None:
             B = len(cc)
             assert len(weight) == B, "The length of data weights must be equal to the batch value."
@@ -99,6 +98,7 @@ class NCC:
                 return weighted_loss
         else:
             return -torch.mean(cc)
+
 
 class MSE:
     """
@@ -229,22 +229,7 @@ class Grad:
         else:
             return grad.mean()
 
-# Define the combined loss function
-def combined_loss(y_true, y_pred, weight=None, return_per_loss=False, ignore_label=None):
-    dice_loss_func = Dice().loss
-    ncc_loss_func = NCC().loss
-    
-    dice_loss = dice_loss_func(y_true, y_pred, weight, return_per_loss, ignore_label)
-    ncc_loss = ncc_loss_func(y_true, y_pred, weight, return_per_loss)
-    
-    if return_per_loss:
-        combined_weighted_loss = dice_loss[0] + ncc_loss[0]
-        combined_per_loss = dice_loss[1] + ncc_loss[1]
-        return combined_weighted_loss, combined_per_loss
-    else:
-        combined_loss_value = dice_loss + ncc_loss
-        return combined_loss_value
-        
+
 def meshgrid3d(inshape):
     z_ = torch.linspace(0., inshape[0] - 1, inshape[0])
     y_ = torch.linspace(0., inshape[1] - 1, inshape[1])
