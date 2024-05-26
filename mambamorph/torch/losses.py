@@ -24,7 +24,7 @@ cl_cfg = dict(
 
 
 # Define the combined loss function
-def combined_loss(y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False, ignore_label=None):
+def combined_loss(y_true, y_pred, msk_true=None, msk_pred=None, ddf_pred=None, weight=None, return_per_loss=False, ignore_label=None):
     dice_loss_func = Dice().loss
     ncc_loss_func = NCC().loss
 
@@ -47,7 +47,7 @@ class NCC:
     def __init__(self, win=None):
         self.win = win
 
-    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False):
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, ddf_pred=None, weight=None, return_per_loss=False):
 
         Ii = y_true
         Ji = y_pred
@@ -121,7 +121,7 @@ class MSE:
     Mean squared error loss.
     """
 
-    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False):
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, ddf_pred=None, weight=None, return_per_loss=False):
         if weight is not None:
             B = len(y_true)
             assert len(weight) == B, "The length of data weights must be equal to the batch value."
@@ -145,7 +145,7 @@ class Dice:
     N-D dice for segmentation
     """
 
-    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False, ignore_label=None):
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, ddf_pred=None, weight=None, return_per_loss=False, ignore_label=None):
         ndims = len(list(msk_pred.size())) - 2
         vol_axes = list(range(2, ndims + 2))
         if weight is not None:
@@ -217,12 +217,12 @@ class Grad:
 
         return df
 
-    def loss(self, _, y_pred, weight=None, return_per_loss=False, ignore_label=None):
+    def loss(self, _,_,_, ddf_pred, weight=None, return_per_loss=False, ignore_label=None):
         if self.penalty == 'l1':
-            dif = [torch.abs(f) for f in self._diffs(y_pred)]
+            dif = [torch.abs(f) for f in self._diffs(ddf_pred)]
         else:
             assert self.penalty == 'l2', 'penalty can only be l1 or l2. Got: %s' % self.penalty
-            dif = [f * f for f in self._diffs(y_pred)]
+            dif = [f * f for f in self._diffs(ddf_pred)]
         df = [torch.mean(torch.flatten(f, start_dim=1), dim=-1) for f in dif]
         grad = sum(df) / len(df)
 
