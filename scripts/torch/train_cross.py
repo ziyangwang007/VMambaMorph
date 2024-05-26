@@ -66,6 +66,7 @@ import generators as src_generators
 sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
 
 import mambamorph.torch.losses as src_loss
+from mambamorph.torch.losses import combined_loss
 import mambamorph.torch.networks as networks
 import mambamorph.torch.utils as utils
 from mambamorph.torch.TransMorph import CONFIGS as CONFIGS_TM
@@ -286,6 +287,8 @@ elif args.image_loss == 'mse':
     image_loss_func = src_loss.MSE().loss
 elif args.image_loss == 'dice':
     image_loss_func = src_loss.Dice().loss
+elif args.image_loss == 'dice_ncc':
+    image_loss_func = combined_loss
 else:
     raise ValueError('Image loss should be "mse" or "ncc", but found "%s"' % args.image_loss)
 
