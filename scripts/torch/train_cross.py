@@ -368,7 +368,7 @@ for epoch in range(args.initial_epoch, args.epochs):
 
         with conditional_autocast(not args.no_amp):
             # ret_dict = model(*inputs)
-            ret_dict = model(*inputs, return_pos_flow=False, return_feature=False)
+            ret_dict = model(*inputs, return_pos_flow=True, return_feature=False)
 
             warped_vol = ret_dict['moved_vol']
             preint_flow = ret_dict['preint_flow']
