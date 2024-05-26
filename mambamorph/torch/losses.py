@@ -23,6 +23,22 @@ cl_cfg = dict(
     select_neg_num=5000, )
 
 
+# Define the combined loss function
+def combined_loss(y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False, ignore_label=None):
+    dice_loss_func = Dice().loss
+    ncc_loss_func = NCC().loss
+
+    dice_loss = dice_loss_func(y_true=y_true, y_pred=y_pred, msk_true=msk_true, msk_pred=msk_pred, weight=weight, return_per_loss=return_per_loss, ignore_label=ignore_label)
+    ncc_loss = ncc_loss_func(y_true=y_true, y_pred=y_pred, msk_true=msk_true, msk_pred=msk_pred, weight=weight, return_per_loss=return_per_loss)
+
+    if return_per_loss:
+        combined_weighted_loss = dice_loss[0] + ncc_loss[0]
+        combined_per_loss = dice_loss[1] + ncc_loss[1]
+        return combined_weighted_loss, combined_per_loss
+    else:
+        combined_loss_value = dice_loss + ncc_loss
+        return combined_loss_value
+
 class NCC:
     """
     Local (over window) normalized cross correlation loss.
@@ -31,7 +47,7 @@ class NCC:
     def __init__(self, win=None):
         self.win = win
 
-    def loss(self, y_true, y_pred, weight=None, return_per_loss=False):
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False):
 
         Ii = y_true
         Ji = y_pred
@@ -105,7 +121,7 @@ class MSE:
     Mean squared error loss.
     """
 
-    def loss(self, y_true, y_pred, weight=None, return_per_loss=False):
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False):
         if weight is not None:
             B = len(y_true)
             assert len(weight) == B, "The length of data weights must be equal to the batch value."
@@ -129,18 +145,18 @@ class Dice:
     N-D dice for segmentation
     """
 
-    def loss(self, y_true, y_pred, weight=None, return_per_loss=False, ignore_label=None):
-        ndims = len(list(y_pred.size())) - 2
+    def loss(self, y_true, y_pred, msk_true=None, msk_pred=None, weight=None, return_per_loss=False, ignore_label=None):
+        ndims = len(list(msk_pred.size())) - 2
         vol_axes = list(range(2, ndims + 2))
         if weight is not None:
-            B = len(y_true)
+            B = len(msk_true)
             assert len(weight) == B, "The length of data weights must be equal to the batch value."
             assert 0.99 < weight.sum().item() < 1.1, "The weights of data must sum to 1."
-            weighted_loss = torch.tensor(0., device=y_true.device)
-            per_loss = torch.zeros([B], dtype=torch.float32, device=y_true.device)
+            weighted_loss = torch.tensor(0., device=msk_true.device)
+            per_loss = torch.zeros([B], dtype=torch.float32, device=msk_true.device)
             for idx in range(B):
-                top = 2 * (y_true[idx:idx + 1] * y_pred[idx:idx + 1]).sum(dim=vol_axes)
-                bottom = torch.clamp((y_true[idx:idx + 1] + y_pred[idx:idx + 1]).sum(dim=vol_axes), min=1e-5)
+                top = 2 * (msk_true[idx:idx + 1] * msk_pred[idx:idx + 1]).sum(dim=vol_axes)
+                bottom = torch.clamp((msk_true[idx:idx + 1] + msk_pred[idx:idx + 1]).sum(dim=vol_axes), min=1e-5)
                 if ignore_label is not None:
                     item_dice = -torch.mean(top[:, ignore_label] / bottom[:, ignore_label])
                 else:
@@ -152,8 +168,8 @@ class Dice:
             else:
                 return weighted_loss
         else:
-            top = 2 * (y_true * y_pred).sum(dim=vol_axes)
-            bottom = torch.clamp((y_true + y_pred).sum(dim=vol_axes), min=1e-5)
+            top = 2 * (msk_true * msk_pred).sum(dim=vol_axes)
+            bottom = torch.clamp((msk_true + msk_pred).sum(dim=vol_axes), min=1e-5)
             if ignore_label is not None:
                 dice = torch.mean(top[:, ignore_label] / bottom[:, ignore_label])
             else:

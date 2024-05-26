@@ -66,6 +66,7 @@ import generators as src_generators
 sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
 
 import mambamorph.torch.losses as src_loss
+from mambamorph.torch.losses import combined_loss
 import mambamorph.torch.networks as networks
 import mambamorph.torch.utils as utils
 from mambamorph.torch.TransMorph import CONFIGS as CONFIGS_TM
@@ -286,6 +287,8 @@ elif args.image_loss == 'mse':
     image_loss_func = src_loss.MSE().loss
 elif args.image_loss == 'dice':
     image_loss_func = src_loss.Dice().loss
+elif args.image_loss == 'dice_ncc':
+    image_loss_func = combined_loss
 else:
     raise ValueError('Image loss should be "mse" or "ncc", but found "%s"' % args.image_loss)
 
@@ -377,7 +380,10 @@ for epoch in range(args.initial_epoch, args.epochs):
             loss_list = []
             per_loss = torch.zeros([args.batch_size], device=device)
             for n, loss_function in enumerate(losses):
-                curr_loss = loss_function(y_true[n], y_pred[n], ignore_label=label_ignore)
+                # curr_loss = loss_function(y_true[n], y_pred[n], ignore_label=label_ignore)
+                curr_loss = loss_function(y_true=vols[1], y_pred=ret_dict['moved_vol'], msk_true=y_true[n],
+                                          msk_pred=y_pred[n], ignore_label=label_ignore) * weights[n]
+
                 curr_loss *= weights[n]
                 loss_list.append(curr_loss.item())
                 loss += curr_loss
@@ -459,7 +465,7 @@ for epoch in range(args.initial_epoch, args.epochs):
                 loss_val = 0
                 loss_list_val = []
                 for n, loss_function in enumerate(losses):
-                    curr_loss = loss_function(y_true[n], y_pred[n], ignore_label=label_ignore) * weights[n]
+                    curr_loss = loss_function(y_true=vols[1],y_pred=ret_dict['moved_vol'],msk_true=y_true[n], msk_pred=y_pred[n], ignore_label=label_ignore) * weights[n]
                     loss_list_val.append(curr_loss.item())
                     loss_val += curr_loss
                 val_loss.append(loss_list_val)
