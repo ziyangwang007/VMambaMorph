@@ -281,24 +281,31 @@ transform_model = SpatialTransformer(inshape, mode='bilinear')  # STN
 transform_model.to(device)
 
 # prepare image loss
-if args.image_loss == 'ncc':
-    image_loss_func = src_loss.NCC().loss
-elif args.image_loss == 'mse':
-    image_loss_func = src_loss.MSE().loss
-elif args.image_loss == 'dice':
-    image_loss_func = src_loss.Dice().loss
-elif args.image_loss == 'dice_ncc':
-    image_loss_func = combined_loss
-else:
-    raise ValueError('Image loss should be "mse" or "ncc", but found "%s"' % args.image_loss)
+
+# if args.image_loss == 'ncc':
+#     image_loss_func = src_loss.NCC().loss
+# elif args.image_loss == 'mse':
+#     image_loss_func = src_loss.MSE().loss
+# elif args.image_loss == 'dice':
+#     image_loss_func = src_loss.Dice().loss
+# elif args.image_loss == 'dice_ncc':
+#     image_loss_func = combined_loss
+# else:
+#     raise ValueError('Image loss should be "mse" or "ncc", but found "%s"' % args.image_loss)
 
 # need two image loss functions if bidirectional
 if bidir:
-    losses = [image_loss_func, image_loss_func]
+    # losses = [image_loss_func, image_loss_func]
     weights = [0.5, 0.5]
 else:
-    losses = [image_loss_func]
+    # losses = [image_loss_func]
     weights = [1]
+
+losses = []
+if 'ncc' in args.image_loss:
+    losses += src_loss.NCC().loss
+if 'dice' in args.image_loss:
+    losses += src_loss.Dice().loss
 
 # prepare deformation loss (regularization loss)
 losses += [src_loss.Grad('l2', loss_mult=args.int_downsize).loss]
