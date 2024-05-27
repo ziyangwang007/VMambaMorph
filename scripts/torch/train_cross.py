@@ -302,10 +302,13 @@ else:
     weights = [1]
 
 losses = []
+weights = []
 if 'ncc' in args.image_loss:
-    losses += src_loss.NCC().loss
+    losses += [src_loss.NCC().loss]
+    weights += [1]
 if 'dice' in args.image_loss:
-    losses += src_loss.Dice().loss
+    losses += [src_loss.Dice().loss]
+    weights += [1]
 
 # prepare deformation loss (regularization loss)
 losses += [src_loss.Grad('l2', loss_mult=args.int_downsize).loss]
