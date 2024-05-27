@@ -369,6 +369,11 @@ for epoch in range(args.initial_epoch, args.epochs):
         with conditional_autocast(not args.no_amp):
             # ret_dict = model(*inputs)
             ret_dict = model(*inputs, return_pos_flow=True, return_feature=False)
+            
+
+            # print(ret_dict['pos_flow'])
+            
+
 
             warped_vol = ret_dict['moved_vol']
             preint_flow = ret_dict['preint_flow']
@@ -381,7 +386,7 @@ for epoch in range(args.initial_epoch, args.epochs):
             per_loss = torch.zeros([args.batch_size], device=device)
             for n, loss_function in enumerate(losses):
                 # curr_loss = loss_function(y_true[n], y_pred[n], ignore_label=label_ignore)
-                curr_loss = loss_function(y_true=inputs[1], y_pred=ret_dict['moved_vol'], msk_true=y_true[n], ddf_pred=ret_dict['pos_flow'],
+                curr_loss = loss_function(y_true=inputs[1], y_pred=warped_vol, msk_true=y_true[n], ddf_pred=preint_flow,
                                           msk_pred=y_pred[n], ignore_label=label_ignore) * weights[n]
 
                 curr_loss *= weights[n]
@@ -465,7 +470,7 @@ for epoch in range(args.initial_epoch, args.epochs):
                 loss_val = 0
                 loss_list_val = []
                 for n, loss_function in enumerate(losses):
-                    curr_loss = loss_function(y_true=inputs[1],y_pred=ret_dict['moved_vol'],msk_true=y_true[n], msk_pred=y_pred[n], ddf_pred=ret_dict['pos_flow'], ignore_label=label_ignore) * weights[n]
+                    curr_loss = loss_function(y_true=inputs[1],y_pred=warped_vol,msk_true=y_true[n], msk_pred=y_pred[n], ddf_pred=preint_flow, ignore_label=label_ignore) * weights[n]
                     loss_list_val.append(curr_loss.item())
                     loss_val += curr_loss
                 val_loss.append(loss_list_val)
