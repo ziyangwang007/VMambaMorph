@@ -372,22 +372,22 @@ for epoch in range(args.initial_epoch, args.epochs):
             
 
             # print(ret_dict['pos_flow'])
-            
-
 
             warped_vol = ret_dict['moved_vol']
             preint_flow = ret_dict['preint_flow']
-            # pos_flow = ret_dict['pos_flow']
+            pos_flow = ret_dict['pos_flow']
             # warped_vol, preint_flow, pos_flow = model(*inputs, return_both_flow=True)
-            warped_label = transform_model(src_label, preint_flow)
-            y_pred = (warped_label, preint_flow)
+            warped_label = transform_model(src_label, pos_flow)
+            # y_pred = (warped_label, preint_flow)
+            pred = (warped_vol, warped_label, preint_flow)
+            true = [inputs[1]] + y_true
             loss = 0
             loss_list = []
             per_loss = torch.zeros([args.batch_size], device=device)
             for n, loss_function in enumerate(losses):
                 # curr_loss = loss_function(y_true[n], y_pred[n], ignore_label=label_ignore)
-                curr_loss = loss_function(y_true=inputs[1], y_pred=warped_vol, msk_true=y_true[n], ddf_pred=preint_flow,
-                                          msk_pred=y_pred[n], ignore_label=label_ignore) * weights[n]
+                curr_loss = loss_function(y_true=true[n], y_pred=pred[n], ignore_label=label_ignore) * weights[n]
+                # curr_loss = loss_function(y_true=inputs[1], y_pred=warped_vol, msk_true=y_true[n], ddf_pred=preint_flow,msk_pred=y_pred[n], ignore_label=label_ignore) * weights[n]
 
                 curr_loss *= weights[n]
                 loss_list.append(curr_loss.item())
@@ -463,14 +463,15 @@ for epoch in range(args.initial_epoch, args.epochs):
                 ret_dict = model(*inputs, return_pos_flow=True)
                 warped_vol = ret_dict['moved_vol']
                 preint_flow = ret_dict['preint_flow']
-                # pos_flow = ret_dict['pos_flow']
-                warped_label = transform_model(src_label, preint_flow)
-                y_pred = (warped_label, preint_flow)
+                pos_flow = ret_dict['pos_flow']
+                warped_label = transform_model(src_label, pos_flow)
+                pred = (warped_vol, warped_label, preint_flow)
+                true = [inputs[1]]+y_true
                 # calculate total loss
                 loss_val = 0
                 loss_list_val = []
                 for n, loss_function in enumerate(losses):
-                    curr_loss = loss_function(y_true=inputs[1],y_pred=warped_vol,msk_true=y_true[n], msk_pred=y_pred[n], ddf_pred=preint_flow, ignore_label=label_ignore) * weights[n]
+                    curr_loss = loss_function(y_true=true[n],y_pred=pred[n], ignore_label=label_ignore) * weights[n]
                     loss_list_val.append(curr_loss.item())
                     loss_val += curr_loss
                 val_loss.append(loss_list_val)

@@ -2013,9 +2013,9 @@ class RecVMambaMorphFeat(nn.Module):
             disp_comp = pos_flow if rr==0 else self.spatial_trans(disp_comp, pos_flow) + pos_flow
             moved = self.spatial_trans(source, disp_comp)
 
-        ret = {'moved_vol': moved, 'preint_flow': flow}
-        if return_pos_flow:
-            ret['pos_flow'] = disp_comp
+        ret = {'moved_vol': moved, 'preint_flow': flow,'pos_flow':disp_comp}
+        # if return_pos_flow:
+        #     ret['pos_flow'] = disp_comp
         if return_feature_loss:
             ret['feature_loss'] = self.feat_loss(self.avg_pool(source_feat),self.avg_pool(target_feat))
         if return_feature:
