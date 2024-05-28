@@ -25,10 +25,11 @@ from voxelmorph.py.utils import jacobian_determinant as jd
 import sys
 import pickle
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph")
+
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v6/mambamorph")
 import generators as src_generators
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v6/mambamorph/torch")
 import losses as src_loss
 import networks
 import utils
@@ -144,12 +145,12 @@ elif args.model == 'mm-feat':
     config = CONFIGS_TM['MambaMorph']
     model = TransMorph.MambaMorphFeat(config)
     model.load_state_dict(torch.load(args.load_model))
-elif args.model == 'vimm':
+elif args.model == 'vvmm':
     config = CONFIGS_TM['VMambaMorph']
     model = TransMorph.VMambaMorph(config)
     if args.load_model:
         model.load_state_dict(torch.load(args.load_model))
-elif args.model == 'vimm-feat':
+elif args.model == 'vvmm-feat':
     config = CONFIGS_TM['VMambaMorph']
     model = TransMorph.VMambaMorphFeat(config)
     if args.load_model:
@@ -224,7 +225,10 @@ if test_subject is not None:
             input_fixed = torch.from_numpy(fixed).to(device).float().permute(0, 4, 1, 2, 3)
             # predict
             start_time = time.time()
-            ret_dict = model(input_moving, input_fixed)
+            if args.model == 'rvm':
+              ret_dict = model(input_moving, input_fixed, rec_num=1)
+            else:
+              ret_dict = model(input_moving, input_fixed)
             end_time = time.time()
             duration = end_time - start_time
             if idx == 0:

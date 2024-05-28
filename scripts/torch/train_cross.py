@@ -60,13 +60,14 @@ from voxelmorph.torch.layers import SpatialTransformer
 import sys
 import pickle
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph")
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v6/mambamorph")
 import generators as src_generators
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v6/mambamorph/torch")
 
 import mambamorph.torch.losses as src_loss
 from mambamorph.torch.losses import combined_loss
+
 import mambamorph.torch.networks as networks
 import mambamorph.torch.utils as utils
 from mambamorph.torch.TransMorph import CONFIGS as CONFIGS_TM
@@ -125,7 +126,7 @@ parser.add_argument('--bidir', action='store_true', help='enable bidirectional c
 parser.add_argument('--model', type=str, default='vm', help='Choose a model to train (vm, vm-feat, mm, mm-feat)')
 
 # loss hyperparameters
-parser.add_argument('--image-loss', default='dice',
+parser.add_argument('--image-loss', default='dice_ncc',
                     help='image reconstruction loss - can be mse or ncc (default: mse)')
 parser.add_argument('--lambda', type=float, dest='weight', default=0.1,
                     help='weight of deformation loss (default: 0.1)')
@@ -301,7 +302,7 @@ else:
     # losses = [image_loss_func]
     weights = [1]
 
-losses = []
+    
 weights = []
 if 'ncc' in args.image_loss:
     losses += [src_loss.NCC().loss]

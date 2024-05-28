@@ -6,7 +6,7 @@ from torch.distributions.normal import Normal
 import pdb
 import sys
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v5/mambamorph/torch")
 import layers
 from modelio import LoadableModel, store_config_args
 import node
