@@ -4,15 +4,12 @@ import sys
 import glob
 import numpy as np
 from scipy.ndimage import zoom
-import voxelmorph as vxm
 
-
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v5/mambamorph")
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph")
 import py
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/VMambaMorph_v5/mambamorph/torch")
+sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
 import utils
-
 
 
 def split_seg_global(seg, labels, downsize=1):
@@ -622,15 +619,15 @@ def volgen_crossmodality(
         # load volumes and concatenate
         load_params = dict(np_var=np_var, add_batch_axis=True, add_feat_axis=add_feat_axis,
                            pad_shape=pad_shape, resize_factor=resize_factor)
-        src_imgs = [utils.minmax_norm(vxm.py.utils.load_volfile(vol_name, **load_params)) for vol_name in first_mod_names]
+        src_imgs = [utils.minmax_norm(py.utils.load_volfile(vol_name, **load_params)) for vol_name in first_mod_names]
         src_vols = np.concatenate(src_imgs, axis=0)
-        tgt_imgs = [utils.minmax_norm(vxm.py.utils.load_volfile(vol_name, **load_params)) for vol_name in second_mod_names]
+        tgt_imgs = [utils.minmax_norm(py.utils.load_volfile(vol_name, **load_params)) for vol_name in second_mod_names]
         tgt_vols = np.concatenate(tgt_imgs, axis=0)
         load_params['np_var'] = 'seg'  # be sure to load seg
-        src_seg = [vxm.py.utils.load_volfile(seg_name, **load_params)
+        src_seg = [py.utils.load_volfile(seg_name, **load_params)
                    for seg_name in seg_names[:batch_size]]
         src_segs = split_seg_global(np.concatenate(src_seg, axis=0), labels=labels, downsize=downsize)
-        tgt_seg = [vxm.py.utils.load_volfile(seg_name, **load_params)
+        tgt_seg = [py.utils.load_volfile(seg_name, **load_params)
                    for seg_name in seg_names[batch_size:]]
         tgt_segs = split_seg_global(np.concatenate(tgt_seg, axis=0), labels=labels, downsize=downsize)
         if chunk:
