@@ -26,7 +26,7 @@ import configs_TransMorph as configs
 from networks import Unet, ConvBlock
 import pdb
 import sys
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph/torch")
 import layers
 from mamba import MambaLayer
 try:
