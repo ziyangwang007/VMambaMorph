@@ -25,11 +25,10 @@ from voxelmorph.py.utils import jacobian_determinant as jd
 import sys
 import pickle
 
-
-sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph")
 import generators as src_generators
 
-sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph/torch")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph/torch")
 import losses as src_loss
 import networks
 import utils

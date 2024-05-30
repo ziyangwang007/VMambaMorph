@@ -5,12 +5,11 @@ import glob
 import numpy as np
 from scipy.ndimage import zoom
 
-sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph")
 import py
 
-sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph/torch")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph/torch")
 import utils
-
 
 def split_seg_global(seg, labels, downsize=1):
     # the input label may be discrete

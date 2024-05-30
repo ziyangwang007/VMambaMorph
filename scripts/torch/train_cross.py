@@ -60,10 +60,10 @@ from voxelmorph.torch.layers import SpatialTransformer
 import sys
 import pickle
 
-sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph")
 import generators as src_generators
 
-sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph/torch")
+sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph/torch")
 
 import mambamorph.torch.losses as src_loss
 from mambamorph.torch.losses import combined_loss
@@ -76,15 +76,15 @@ import mambamorph.torch.TransMorph as TransMorph
 parser = argparse.ArgumentParser()
 
 # data organization parameters
-parser.add_argument('--subj-train', default="/media/ziyang/14TBWD/VMambaMorph/SR-Reg_v2/train_subj_v2.pkl",
+parser.add_argument('--subj-train', default="/home/ziyang/Downloads/VMambaMorph/SR-Reg_v2/train_subj_v2.pkl",
                     help='subjects used for train')
-parser.add_argument('--subj-val', default="/media/ziyang/14TBWD/VMambaMorph/SR-Reg_v2/val_subj_v2.pkl",
+parser.add_argument('--subj-val', default="/home/ziyang/Downloads/VMambaMorph/SR-Reg_v2/val_subj_v2.pkl",
                     help='subjects used for validation')
-parser.add_argument('--subj-test', default="/media/ziyang/14TBWD/VMambaMorph/SR-Reg_v2/test_subj_v2.pkl",
+parser.add_argument('--subj-test', default="/home/ziyang/Downloads/VMambaMorph/SR-Reg_v2/test_subj_v2.pkl",
                     help='subjects used for test')
-parser.add_argument('--vol-path', default="/media/ziyang/14TBWD/VMambaMorph/SR-Reg_v2/vol/",
+parser.add_argument('--vol-path', default="/home/ziyang/Downloads/VMambaMorph/SR-Reg_v2/vol/",
                     help='path to cross modality volume')
-parser.add_argument('--seg-path', default="/media/ziyang/14TBWD/VMambaMorph/SR-Reg_v2/seg/",
+parser.add_argument('--seg-path', default="/home/ziyang/Downloads/VMambaMorph/SR-Reg_v2/seg/",
                     help='path to cross modality segmentation')
 parser.add_argument('--model-dir', default='models',
                     help='model output directory (default: models)')
