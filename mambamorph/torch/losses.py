@@ -47,7 +47,7 @@ class NCC:
     def __init__(self, win=None):
         self.win = win
 
-    def loss(self, y_true, y_pred, weight=None, return_per_loss=False):
+    def loss(self, y_true, y_pred, weight=None, return_per_loss=False, ignore_label=None):
 
         Ii = y_true
         Ji = y_pred
@@ -146,6 +146,7 @@ class Dice:
     """
 
     def loss(self, y_true, y_pred, weight=None, return_per_loss=False, ignore_label=None):
+
         ndims = len(list(y_pred.size())) - 2
         vol_axes = list(range(2, ndims + 2))
         if weight is not None:
@@ -157,6 +158,8 @@ class Dice:
             for idx in range(B):
                 top = 2 * (y_true[idx:idx + 1] * y_pred[idx:idx + 1]).sum(dim=vol_axes)
                 bottom = torch.clamp((y_true[idx:idx + 1] + y_pred[idx:idx + 1]).sum(dim=vol_axes), min=1e-5)
+
+
                 if ignore_label is not None:
                     item_dice = -torch.mean(top[:, ignore_label] / bottom[:, ignore_label])
                 else:
@@ -170,6 +173,7 @@ class Dice:
         else:
             top = 2 * (y_true * y_pred).sum(dim=vol_axes)
             bottom = torch.clamp((y_true + y_pred).sum(dim=vol_axes), min=1e-5)
+
             if ignore_label is not None:
                 dice = torch.mean(top[:, ignore_label] / bottom[:, ignore_label])
             else:
@@ -181,6 +185,8 @@ class Dice:
         vol_axes = list(range(2, ndims + 2))
         top = 2 * (y_true * y_pred).sum(dim=vol_axes)
         bottom = torch.clamp((y_true + y_pred).sum(dim=vol_axes), min=1e-5)
+
+
         if ignore_label is not None:
             dice = top[:, ignore_label] / bottom[:, ignore_label]
         else:

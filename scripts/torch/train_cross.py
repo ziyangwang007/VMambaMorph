@@ -125,11 +125,11 @@ parser.add_argument('--bidir', action='store_true', help='enable bidirectional c
 parser.add_argument('--model', type=str, default='vm', help='Choose a model to train (vm, vm-feat, mm, mm-feat)')
 
 # loss hyperparameters
-parser.add_argument('--image-loss', default='dice',
+parser.add_argument('--image-loss', default='dice_ncc',
                     help='image reconstruction loss - can be mse or ncc (default: mse)')
 parser.add_argument('--lambda', type=float, dest='weight', default=0.1,
                     help='weight of deformation loss (default: 0.1)')
-parser.add_argument('--ignore-label', type=int, nargs='+', default=[0, 5, 24],
+parser.add_argument('--ignore-label', type=int, nargs='+', default=[0,5,24],
                     help='list of ignorable labels')
 parser.add_argument('--cl', type=float, default=0.0, help='whether to use contrastive loss and set its weight')
 args = parser.parse_args()
@@ -391,11 +391,18 @@ for epoch in range(args.initial_epoch, args.epochs):
             # y_pred = (warped_label, preint_flow)
             pred = (warped_vol, warped_label, preint_flow)
             true = [inputs[1]] + y_true
+
             loss = 0
             loss_list = []
             per_loss = torch.zeros([args.batch_size], device=device)
             for n, loss_function in enumerate(losses):
                 # curr_loss = loss_function(y_true[n], y_pred[n], ignore_label=label_ignore)
+
+                # print('*'*20)
+                # print(losses)
+                # print(true[n].size())
+                # print(pred[n].size())
+
                 curr_loss = loss_function(y_true=true[n], y_pred=pred[n], ignore_label=label_ignore) * weights[n]
                 # curr_loss = loss_function(y_true=inputs[1], y_pred=warped_vol, msk_true=y_true[n], ddf_pred=preint_flow,msk_pred=y_pred[n], ignore_label=label_ignore) * weights[n]
 
