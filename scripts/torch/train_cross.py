@@ -65,12 +65,12 @@ import generators as src_generators
 
 sys.path.append(r"/home/ziyang/Downloads/VMambaMorph/VMambaMorph/mambamorph/torch")
 
-import mambamorph.torch.losses as src_loss
-from mambamorph.torch.losses import combined_loss
-import mambamorph.torch.networks as networks
-import mambamorph.torch.utils as utils
-from mambamorph.torch.TransMorph import CONFIGS as CONFIGS_TM
-import mambamorph.torch.TransMorph as TransMorph
+import losses as src_loss
+from losses import combined_loss
+import networks as networks
+import utils as utils
+from TransMorph import CONFIGS as CONFIGS_TM
+import TransMorph as TransMorph
 
 # parse the commandline
 parser = argparse.ArgumentParser()
