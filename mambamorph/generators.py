@@ -5,10 +5,10 @@ import glob
 import numpy as np
 from scipy.ndimage import zoom
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph")
+sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph")
 import py
 
-sys.path.append(r"/media/ziyang/14TBWD/VMambaMorph/MambaMorph/mambamorph/torch")
+sys.path.append(r"/media/ziyang/14TB-WDC/VMambaMorph/VMambaMorph_v6/mambamorph/torch")
 import utils
 
 
