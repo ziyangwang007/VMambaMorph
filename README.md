@@ -86,6 +86,18 @@ python ./scripts/torch/test_cross.py --gpu 0 --model XXX --load-model "Your Path
   year={2024}
 }
 ```
+
+- Wang, Ziyang, et al. "Mamba-unet: Unet-like pure visual mamba for medical image segmentation." arXiv preprint arXiv:2402.05079 (2024).
+```bibtex
+@article{wang2024mamba,
+  title={Mamba-unet: Unet-like pure visual mamba for medical image segmentation},
+  author={Wang, Ziyang and Zheng, Jian-Qing and Zhang, Yichi and Cui, Ge and Li, Lei},
+  journal={arXiv preprint arXiv:2402.05079},
+  year={2024}
+}
+```
+
+
 and if applicable, the version of [MambaMorph](https://github.com/Guo-Stone/MambaMorph):
 ```bibtex
 @article{guo2024mambamorph,
